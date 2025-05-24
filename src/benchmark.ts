@@ -16,6 +16,7 @@ interface Timings {
 
 export async function runBenchmark(
   urlStr: string,
+  timeout: number = 10000,
 ): Promise<BenchmarkResult | null> {
   const url = new URL(urlStr);
   const isHttps = url.protocol === 'https:';
@@ -34,7 +35,7 @@ export async function runBenchmark(
         path: url.pathname + url.search,
       },
       (res) => {
-        res.once('readable', () => {
+        res.once('data', () => {
           timings.firstByte = performance.now();
         });
 
@@ -65,6 +66,12 @@ export async function runBenchmark(
       },
     );
 
+    req.setTimeout(timeout, () => {
+      console.error(`Request timed out after ${timeout} ms`);
+      req.destroy();
+      resolve(null);
+    });
+
     req.on('socket', (socket) => {
       socket.once('lookup', () => {
         timings.dnsLookup = performance.now();
@@ -74,7 +81,7 @@ export async function runBenchmark(
         timings.tcpConnection = performance.now();
       });
 
-      if (isHttps && socket instanceof TLSSocket) {
+      if (isHttps && (socket as TLSSocket).encrypted) {
         socket.once('secureConnect', () => {
           timings.tlsHandshake = performance.now();
         });

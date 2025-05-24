@@ -3,20 +3,20 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "start": "tsx src/index.ts",
+    "dev": "tsx src/index.ts",
     "build": "tsc"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "description": "",
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "commander": "^14.0.0"
+  },
   "devDependencies": {
     "@types/node": "^22.15.21",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
-  },
-  "dependencies": {
-    "chalk": "^5.4.1",
-    "commander": "^14.0.0"
   }
 }
